@@ -2,64 +2,53 @@ const body = document.getElementsByTagName('body')[0];
 const searchContainer = document.querySelector('.search-container');
 const gallery = document.getElementById('gallery');
 
-// let results;
-// let parsedResults;
-// let profilePic;
-// let firstName;
-// let lastName;
-// let fullName;
 
-const fetchUser = () => {
-  // const employee = {};
 
-  fetch('https://randomuser.me/api/')
+const fetchUsers = () => {
+  fetch('https://randomuser.me/api/?results=12')
     .then((response) => {
       return response.json();
     })
-    .then((myJson) => {
-      results = JSON.stringify(myJson.results[0]);
-      parsedResults = JSON.parse(results);
-
-      // GALLERY ITEM
-      // profile pic
-      profilePic = parsedResults.picture['large'];
-      // // first and last name
-      firstName = parsedResults.name.first;
-      lastName = parsedResults.name.last;
-      fullName = `${firstName} ${lastName}`;
-      // email
-      email = parsedResults.email;
-      // city and state
-      city = parsedResults.location.city;
-      state = parsedResults.location.state;
-      location = `${city}, ${state}`;
-
-      // // MODAL
-      // // profile pic
-      // console.log(JSON.stringify(myJson.results[0].picture['large']));
-      // // first and last name
-      // console.log(JSON.stringify(myJson.results[0].name.first));
-      // console.log(JSON.stringify(myJson.results[0].name.last));
-      // // email
-      // console.log(JSON.stringify(myJson.results[0].email));
-      // // city
-      // console.log(JSON.stringify(myJson.results[0].location.city));;
-      // // phone
-      // console.log(JSON.stringify(myJson.results[0].cell));
-      // // address
-      // console.log(JSON.stringify(myJson.results[0].location.street));
-      // console.log(JSON.stringify(myJson.results[0].location.city));
-      // console.log(JSON.stringify(myJson.results[0].location.state));
-      // console.log(JSON.stringify(myJson.results[0].location.postcode));
-      // // bday xx/xx/xxxx
-      // const getDOB = () => {
-      //   const dateStr = JSON.parse(JSON.stringify(myJson.results[0].dob.date.slice(0, 10)));
-      //   const splitDate = dateStr.toString().split('-');
-      //   const date = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`;
-      //   return date;
-      // }
+    .then((data) => {
+      processData(data.results);
     })
-  return employee;
+}
+
+const processData = (data) => {
+  const employees = data.map((employee, i) => {
+    return {
+      index: i,
+      profilePic: employee.picture.large,
+      name: `${employee.name.first} ${employee.name.last}`,
+      email: employee.email,
+      cityState: `${employee.location.city}, ${employee.location.state}`,
+      phone: employee.cell,
+      address: `${employee.location.street} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}`,
+      birthday: formatBirthday(employee.dob)
+    }
+  })
+  displayCards(employees);
+}
+
+formatBirthday = (dob) => {
+  const dateStr = dob.date.slice(0, 10);
+  const splitDate = dateStr.toString().split('-');
+  const formattedDOB = `${splitDate[1]}/${splitDate[2]}/${splitDate[0]}`;
+  return formattedDOB;
+}
+
+const displayCards = (employees) => {
+  employees.forEach((employee) => {
+    createCard(employee);
+  })
+}
+
+const displayModal = (e) => {
+  const parent = e.target.nextElementChild;
+  console.log(parent);
+  // if (e.target.className === 'card') {
+
+  // }
 }
 
 const createSearch = () => {
@@ -84,15 +73,16 @@ const createSearch = () => {
   searchContainer.appendChild(form);
 }
 
-const createCard = (name, email, city, state) => {
+const createCard = (employee) => {
   const div = document.createElement('div');
   div.className = 'card';
+  div.id = employee.index;
 
   const imgContainer = document.createElement('div');
   imgContainer.className = 'card-img-container';
   const image = document.createElement('img');
   image.className = 'card-img';
-  image.src = 'https://placehold.it/90x90';
+  image.src = employee.profilePic;
   image.alt = 'profile picture';
   imgContainer.appendChild(image);
 
@@ -102,15 +92,15 @@ const createCard = (name, email, city, state) => {
   const h3Name = document.createElement('h3');
   h3Name.id = 'name';
   h3Name.className = 'card-name cap';
-  h3Name.textContent = name;
+  h3Name.textContent = employee.name;
 
   const pEmail = document.createElement('p');
   pEmail.className = 'card-text';
-  pEmail.textContent = email;
+  pEmail.textContent = employee.email;
 
   const pLocation = document.createElement('p');
   pLocation.className = 'card-text cap';
-  pLocation.textContent = `${city}, ${state}`;
+  pLocation.textContent = employee.cityState;
 
   infoContainer.appendChild(h3Name);
   infoContainer.appendChild(pEmail);
@@ -118,9 +108,10 @@ const createCard = (name, email, city, state) => {
   div.appendChild(imgContainer);
   div.appendChild(infoContainer);
   gallery.appendChild(div);
+
 }
 
-const createModal = (name, email, city, phone, address, dob) => {
+const createModal = (employee) => {
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-container';
 
@@ -139,35 +130,35 @@ const createModal = (name, email, city, phone, address, dob) => {
 
   const modalImage = document.createElement('img');
   modalImage.className = 'modal-img';
-  modalImage.src = 'https://placehold.it/125x125';
+  modalImage.src = employee.profilePic;
   modalImage.alt = 'profile picture';
 
   const h3Name = document.createElement('h3');
   h3Name.id = 'name';
   h3Name.className = 'modal-name cap';
-  h3Name.textContent = name;
+  h3Name.textContent = employee.name;
 
   const pEmail = document.createElement('p');
   pEmail.className = 'modal-text';
-  pEmail.textContent = email;
+  pEmail.textContent = employee.email;
 
   const pCity = document.createElement('p');
   pCity.className = 'modal-text cap';
-  pCity.textContent = city;
+  pCity.textContent = employee.cityState;
 
   const hr = document.createElement('hr');
 
   const pPhone = document.createElement('p');
   pPhone.className = 'modal-text';
-  pPhone.textContent = phone;
+  pPhone.textContent = employee.phone;
 
   const pAddress = document.createElement('p');
   pAddress.className = 'modal-text';
-  pAddress.textContent = address;
+  pAddress.textContent = employee.address;
 
   const pDOB = document.createElement('p');
   pDOB.className = 'modal-text';
-  pDOB.textContent = `Birthday: ${dob}`;
+  pDOB.textContent = `Birthday: ${employee.birthday}`;
 
   modalInfoContainer.appendChild(modalImage);
   modalInfoContainer.appendChild(h3Name);
@@ -208,5 +199,5 @@ const modalBtnContainer = () => {
   return container;
 }
 
-fetchUser();
-
+gallery.addEventListener('click', displayModal);
+fetchUsers();
