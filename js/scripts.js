@@ -1,9 +1,14 @@
-const body = document.getElementsByTagName('body')[0];
+/*
+TREEHOUSE PROJECT 5 - PUBLIC API REQUEST
+========================================
+*/
+
+const body = document.querySelector('body');
 const searchContainer = document.querySelector('.search-container');
 const gallery = document.getElementById('gallery');
+const modal = document.getElementById('')
 
-
-
+// let finalList; ??????????????????
 const fetchUsers = () => {
   fetch('https://randomuser.me/api/?results=12')
     .then((response) => {
@@ -27,7 +32,8 @@ const processData = (data) => {
       birthday: formatBirthday(employee.dob)
     }
   })
-  displayCards(employees);
+  finalList = employees;
+  displayCards(finalList);
 }
 
 formatBirthday = (dob) => {
@@ -43,12 +49,37 @@ const displayCards = (employees) => {
   })
 }
 
-const displayModal = (e) => {
-  const parent = e.target.nextElementChild;
-  console.log(parent);
-  // if (e.target.className === 'card') {
+const displayModal = (i) => {
+  createModal(finalList[i], i);
+}
 
-  // }
+const closeModal = (e) => {
+  const container = e.target.parentElement.parentElement.parentElement;
+  container.style.display = 'none';
+}
+
+const changeModal = (e) => {
+  const i = e.target.parentElement.id;
+  console.log(i);
+  if (e.target.id === 'modal-prev') {
+    closeModal();
+    displayModal(i + 1);
+  }
+  if (e.target.id === 'modal-next') {
+    displayModal(i - 1);
+  }
+}
+
+const getCard = (e) => {
+  getId(e.target);
+  function getId(target) {
+    if (target.className === 'card') {
+      displayModal(target.id);
+    } else {
+      target = target.parentNode;
+      getId(target);
+    }
+  }
 }
 
 const createSearch = () => {
@@ -108,12 +139,12 @@ const createCard = (employee) => {
   div.appendChild(imgContainer);
   div.appendChild(infoContainer);
   gallery.appendChild(div);
-
 }
 
-const createModal = (employee) => {
+const createModal = (employee, i) => {
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-container';
+  modalContainer.id = i;
 
   const modal = document.createElement('div');
   modal.className = 'modal';
@@ -124,6 +155,7 @@ const createModal = (employee) => {
   closeButton.className = 'modal-close-btn';
   closeButton.style.textDecoration = 'strong';
   closeButton.textContent = 'X';
+  closeButton.addEventListener('click', closeModal);
 
   const modalInfoContainer = document.createElement('div');
   modalInfoContainer.className = 'modal-info-container';
@@ -160,6 +192,7 @@ const createModal = (employee) => {
   pDOB.className = 'modal-text';
   pDOB.textContent = `Birthday: ${employee.birthday}`;
 
+  modalInfoContainer.appendChild(closeButton);
   modalInfoContainer.appendChild(modalImage);
   modalInfoContainer.appendChild(h3Name);
   modalInfoContainer.appendChild(pEmail);
@@ -172,32 +205,37 @@ const createModal = (employee) => {
   modal.appendChild(modalInfoContainer);
 
   modalContainer.appendChild(modal);
-  const modalButtons = modalBtnContainer();
+  const modalButtons = modalBtnContainer(i);
   modalContainer.appendChild(modalButtons);
+
 
   body.appendChild(modalContainer);
 }
 
-const modalBtnContainer = () => {
+const modalBtnContainer = (index) => {
   const container = document.createElement('div');
   container.className = 'modal-btn-container';
+  container.id = index;
 
   const previous = document.createElement('button');
   previous.type = 'button';
   previous.id = 'modal-prev';
   previous.className = 'modal-prev btn';
   previous.textContent = 'Prev';
+  previous.addEventListener('click', changeModal);
 
   const next = document.createElement('button');
   next.type = 'button';
   next.id = 'modal-next';
   next.className = 'modal-next btn';
   next.textContent = 'Next';
+  next.addEventListener('click', changeModal);
 
   container.appendChild(previous);
   container.appendChild(next);
   return container;
 }
 
-gallery.addEventListener('click', displayModal);
+gallery.addEventListener('click', getCard);
 fetchUsers();
+
