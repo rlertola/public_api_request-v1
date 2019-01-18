@@ -6,7 +6,7 @@ TREEHOUSE PROJECT 5 - PUBLIC API REQUEST
 const body = document.querySelector('body');
 const searchContainer = document.querySelector('.search-container');
 const gallery = document.getElementById('gallery');
-const modal = document.getElementById('')
+const modals = [];
 
 // let finalList; ??????????????????
 const fetchUsers = () => {
@@ -34,6 +34,7 @@ const processData = (data) => {
   })
   finalList = employees;
   displayCards(finalList);
+  createModals(finalList);
 }
 
 formatBirthday = (dob) => {
@@ -49,25 +50,38 @@ const displayCards = (employees) => {
   })
 }
 
+const createModals = (employees) => {
+  employees.forEach((employee) => {
+    modals.push(createModal(employee));
+  })
+}
+
 const displayModal = (i) => {
-  createModal(finalList[i], i);
+  modals[i].style.display = 'inherit';
+}
+
+const hideModal = (i) => {
+  modals[i].style.display = 'none';
 }
 
 const closeModal = (e) => {
-  const container = e.target.parentElement.parentElement.parentElement;
-  container.style.display = 'none';
+  let i = e.target.parentElement.id;
+  hideModal(i);
 }
 
 const changeModal = (e) => {
-  const i = e.target.parentElement.id;
-  console.log(i);
+  let i = e.target.parentElement.id;
+  console.log(typeof i);
+  hideModal(i);
   if (e.target.id === 'modal-prev') {
-    closeModal();
-    displayModal(i + 1);
+    i--;
+    console.log(typeof i);
   }
   if (e.target.id === 'modal-next') {
-    displayModal(i - 1);
+    i++;
+    console.log(typeof i);
   }
+  displayModal(i);
 }
 
 const getCard = (e) => {
@@ -141,10 +155,10 @@ const createCard = (employee) => {
   gallery.appendChild(div);
 }
 
-const createModal = (employee, i) => {
+const createModal = (employee) => {
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-container';
-  modalContainer.id = i;
+
 
   const modal = document.createElement('div');
   modal.className = 'modal';
@@ -159,6 +173,7 @@ const createModal = (employee, i) => {
 
   const modalInfoContainer = document.createElement('div');
   modalInfoContainer.className = 'modal-info-container';
+  modalInfoContainer.id = employee.index;
 
   const modalImage = document.createElement('img');
   modalImage.className = 'modal-img';
@@ -205,11 +220,12 @@ const createModal = (employee, i) => {
   modal.appendChild(modalInfoContainer);
 
   modalContainer.appendChild(modal);
-  const modalButtons = modalBtnContainer(i);
+  const modalButtons = modalBtnContainer(employee.index);
   modalContainer.appendChild(modalButtons);
-
+  modalContainer.style.display = 'none';
 
   body.appendChild(modalContainer);
+  return modalContainer;
 }
 
 const modalBtnContainer = (index) => {
