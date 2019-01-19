@@ -197,7 +197,7 @@ const createModal = (employee) => {
   closeButton.id = 'modal-close-btn';
   closeButton.className = 'modal-close-btn';
   closeButton.style.textDecoration = 'strong';
-  closeButton.textContent = 'X';
+  closeButton.textContent = 'x';
   closeButton.addEventListener('click', closeModal);
 
   const modalInfoContainer = document.createElement('div');
@@ -244,7 +244,7 @@ const createModal = (employee) => {
   modalInfoContainer.appendChild(hr);
   modalInfoContainer.appendChild(pPhone);
   modalInfoContainer.appendChild(pAddress);
-  // modalInfoContainer.appendChild(pDOB);
+  modalInfoContainer.appendChild(pDOB);
 
   modal.appendChild(modalInfoContainer);
 
