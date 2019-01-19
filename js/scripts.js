@@ -6,11 +6,12 @@ TREEHOUSE PROJECT 5 - PUBLIC API REQUEST
 const body = document.querySelector('body');
 const searchContainer = document.querySelector('.search-container');
 const gallery = document.getElementById('gallery');
+const cards = document.getElementsByClassName('card');
 const modals = [];
 
 // let finalList; ??????????????????
 const fetchUsers = () => {
-  fetch('https://randomuser.me/api/?results=12')
+  fetch('https://randomuser.me/api/?nat=us,au,ca,gb,ie,nz&results=12')
     .then((response) => {
       return response.json();
     })
@@ -28,7 +29,7 @@ const processData = (data) => {
       email: employee.email,
       cityState: `${employee.location.city}, ${employee.location.state}`,
       phone: employee.cell,
-      address: `${employee.location.street} ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}`,
+      address: `${employee.location.street}, ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}`,
       birthday: formatBirthday(employee.dob)
     }
   })
@@ -70,22 +71,27 @@ const closeModal = (e) => {
 }
 
 const changeModal = (e) => {
-  let i = e.target.parentElement.id;
-  console.log(typeof i);
+  let i = parseInt(e.target.parentElement.id);
   hideModal(i);
   if (e.target.id === 'modal-prev') {
+    if (i === 0) {
+      i += finalList.length;
+    }
     i--;
-    console.log(typeof i);
   }
   if (e.target.id === 'modal-next') {
+    if (i === finalList.length - 1) {
+      i -= finalList.length;
+    }
     i++;
-    console.log(typeof i);
   }
   displayModal(i);
 }
 
 const getCard = (e) => {
-  getId(e.target);
+  if (e.target.className !== 'gallery') {
+    getId(e.target);
+  }
   function getId(target) {
     if (target.className === 'card') {
       displayModal(target.id);
@@ -94,6 +100,28 @@ const getCard = (e) => {
       getId(target);
     }
   }
+}
+
+const searchFromInput = (e) => {
+  const searchValue = e.target.value;
+  filterSearch(searchValue);
+}
+
+// const searchFromButton = (e) => {
+//   const searchInput = document.getElementById('search-input');
+//   searchInput.blur();
+//   const searchValue = searchInput.value;
+//   filterSearch(searchValue);
+// }
+
+const filterSearch = (inputValue) => {
+  finalList.forEach((employee, i) => {
+    if (!employee.name.includes(inputValue)) {
+      cards[i].style.display = 'none';
+    } else {
+      cards[i].style.display = 'inherit';
+    }
+  })
 }
 
 const createSearch = () => {
@@ -106,12 +134,14 @@ const createSearch = () => {
   searchBox.id = 'search-input';
   searchBox.className = 'search-input';
   searchBox.placeholder = 'Search...';
+  searchBox.addEventListener('keyup', searchFromInput);
 
   const searchButton = document.createElement('input');
   searchButton.type = 'submit';
   searchButton.value = 'Search';
   searchButton.id = 'search-input';
   searchButton.className = 'search-submit';
+  // searchButton.addEventListener('click', searchFromButton);
 
   form.appendChild(searchBox);
   form.appendChild(searchButton);
@@ -159,7 +189,6 @@ const createModal = (employee) => {
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-container';
 
-
   const modal = document.createElement('div');
   modal.className = 'modal';
 
@@ -200,7 +229,7 @@ const createModal = (employee) => {
   pPhone.textContent = employee.phone;
 
   const pAddress = document.createElement('p');
-  pAddress.className = 'modal-text';
+  pAddress.className = 'modal-text cap';
   pAddress.textContent = employee.address;
 
   const pDOB = document.createElement('p');
@@ -215,7 +244,7 @@ const createModal = (employee) => {
   modalInfoContainer.appendChild(hr);
   modalInfoContainer.appendChild(pPhone);
   modalInfoContainer.appendChild(pAddress);
-  modalInfoContainer.appendChild(pDOB);
+  // modalInfoContainer.appendChild(pDOB);
 
   modal.appendChild(modalInfoContainer);
 
@@ -253,5 +282,7 @@ const modalBtnContainer = (index) => {
 }
 
 gallery.addEventListener('click', getCard);
+createSearch();
 fetchUsers();
+
 
