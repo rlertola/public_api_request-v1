@@ -9,7 +9,8 @@ const gallery = document.getElementById('gallery');
 const cards = document.getElementsByClassName('card');
 const modals = [];
 
-// let finalList; ??????????????????
+// 12 random users from only english-speaking countries(for search feature) are pulled from the API.
+// New group of users is displayed everytime the page is refreshed.
 const fetchUsers = () => {
   fetch('https://randomuser.me/api/?nat=us,au,ca,gb,ie,nz&results=12')
     .then((response) => {
@@ -20,6 +21,8 @@ const fetchUsers = () => {
     })
 }
 
+// Takes the incoming data and makes a new array of employees with the necessary info.
+// Used to display the cards and create the modals.
 const processData = (data) => {
   const employees = data.map((employee, i) => {
     return {
@@ -38,6 +41,7 @@ const processData = (data) => {
   createModals(finalList);
 }
 
+// Helper function to properly display dob.
 formatBirthday = (dob) => {
   const dateStr = dob.date.slice(0, 10);
   const splitDate = dateStr.toString().split('-');
@@ -45,18 +49,21 @@ formatBirthday = (dob) => {
   return formattedDOB;
 }
 
+// Runs createCard for each employee in the array and displays them.
 const displayCards = (employees) => {
   employees.forEach((employee) => {
     createCard(employee);
   })
 }
 
+// Creates modals for each employee, which are hidden at first.
 const createModals = (employees) => {
   employees.forEach((employee) => {
     modals.push(createModal(employee));
   })
 }
 
+// Functions to display, hide and close modals.
 const displayModal = (i) => {
   modals[i].style.display = 'inherit';
 }
@@ -70,6 +77,9 @@ const closeModal = (e) => {
   hideModal(i);
 }
 
+// Once modal is on screen, allows user to cycle through each modal (for exceeds grade).
+// User is able to scroll through entire list. When 'next' is pushed on the last employee,
+// it will go back to the first employee, and vice versa when going the other direction.
 const changeModal = (e) => {
   let i = parseInt(e.target.parentElement.id);
   hideModal(i);
@@ -88,6 +98,9 @@ const changeModal = (e) => {
   displayModal(i);
 }
 
+// Recursively gets the id of the employee of the card that is clicked on, so that the modals can be displayed.
+// If one of the inner elements is clicked on, like the email, it will keep going out to the parent element,
+// until it gets to the one with class 'card'.
 const getCard = (e) => {
   if (e.target.className !== 'gallery') {
     getId(e.target);
@@ -102,17 +115,11 @@ const getCard = (e) => {
   }
 }
 
+// As each letter is entered or deleted, the search results are updated (for exceeds grade).
 const searchFromInput = (e) => {
   const searchValue = e.target.value;
   filterSearch(searchValue);
 }
-
-// const searchFromButton = (e) => {
-//   const searchInput = document.getElementById('search-input');
-//   searchInput.blur();
-//   const searchValue = searchInput.value;
-//   filterSearch(searchValue);
-// }
 
 const filterSearch = (inputValue) => {
   finalList.forEach((employee, i) => {
@@ -124,6 +131,15 @@ const filterSearch = (inputValue) => {
   })
 }
 
+// THE SEARCH BUTTON IS UNNECESSARY SINCE CARDS ARE FILTERED AS USER TYPES, BUT IT WOULD LOOK LIKE THIS IF IT WERE NECESSARY.
+// const searchFromButton = (e) => {
+//   const searchInput = document.getElementById('search-input');
+//   searchInput.blur();
+//   const searchValue = searchInput.value;
+//   filterSearch(searchValue);
+// }
+
+// Creates the search input box and button.
 const createSearch = () => {
   const form = document.createElement('form');
   form.action = '#';
@@ -148,6 +164,7 @@ const createSearch = () => {
   searchContainer.appendChild(form);
 }
 
+// Creates card for each employee. The index is given as an id so that corresponding modals are easily displayed.
 const createCard = (employee) => {
   const div = document.createElement('div');
   div.className = 'card';
@@ -185,6 +202,7 @@ const createCard = (employee) => {
   gallery.appendChild(div);
 }
 
+// Modals are created for each employee at the start, but are hidden until the cards are clicked.
 const createModal = (employee) => {
   const modalContainer = document.createElement('div');
   modalContainer.className = 'modal-container';
@@ -257,6 +275,8 @@ const createModal = (employee) => {
   return modalContainer;
 }
 
+// Holds the previous and next buttons to scroll through the modals.
+// Old card is hidden and new one is displyed.
 const modalBtnContainer = (index) => {
   const container = document.createElement('div');
   container.className = 'modal-btn-container';
