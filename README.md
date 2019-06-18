@@ -8,10 +8,10 @@ This project was made using html, css, and vanilla javascript.
 ### Modals
 When each card is clicked, the modal for that employee is displayed. User can cycle through the modals with the previous and next buttons (exceeds). When the end or beginning of the list is reached, there are no errors, it will go back to the beginning or end of the list. Modals can be closed by clicking the 'x' in upper right.
 
-### Search (exceeds)
+### Search
 As the user types (or deletes) in the search box, the cards are filtered and displayed dynamically.
 
-### Updated Style (exceeds)
+### Updated Style
 Background color has been changed from the original and some styling has been added, including box shadow on the cards, spacing between the modal buttons, button color, the closing 'x' style, and an underline for the header.
 
 
