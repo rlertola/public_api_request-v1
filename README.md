@@ -1,5 +1,7 @@
 # TREEHOUSE PROJECT 5 - PUBLIC API REQUEST
 
+https://rlertola.github.io/public_api_request-v1/
+
 This project was made using html, css, and vanilla javascript.
 
 ### Random User API
